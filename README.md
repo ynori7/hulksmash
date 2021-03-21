@@ -3,7 +3,7 @@
 ![HulkSmash Logo](hulksmash.png)
 
 This is a very easy-to-use library for building a custom brute-force requester for QA purposes. This
-tool can be useful, for exmample, for performance and load testing or for testing your rate-limiter. This tool
+tool can be useful, for example, for performance and load testing or for testing your rate-limiter. This tool
 automatically adds randomized headers to anonymize the request such as `X-Forwarded-For` and `User-Agent`.
 
 This tool is to be used only for benign purposes! 
