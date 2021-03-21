@@ -20,7 +20,7 @@ requestBuilder := func(index int) *http.Request {
     return req
 }
 
-hulksmash.NewSmasher().Smash(context.Background(), requestBuilder)
+hulksmash.NewSmasher(hulksmash.WithIterations(5)).Smash(context.Background(), requestBuilder)
 ```
 
 The smasher comes with some configurable options with safe defaults. Here is a list of the options:
