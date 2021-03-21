@@ -34,7 +34,7 @@ The smasher comes with some configurable options with safe defaults. Here is a l
 | WithIterations | The number of calls to make | 1 |
 | WithStartIndex | The start index to use when iterating. Can be useful if you want to resume a previous experiment | 0 |
 
-A basic and advanced example can be found in [exaple](example).
+A basic and advanced example can be found in [example](example).
 
 ## Attribution
 Icon from [Sujud.icon](https://www.iconfinder.com/MUHrist) ([CC BY 3.0](https://creativecommons.org/licenses/by/3.0/))
