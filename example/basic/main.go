@@ -12,9 +12,8 @@ const (
 )
 
 func main() {
-	requestBuilder := func(index int) *http.Request {
-		req, _ := http.NewRequest(http.MethodGet, url, nil)
-		return req
+	requestBuilder := func(index int) (*http.Request, error) {
+		return http.NewRequest(http.MethodGet, url, nil)
 	}
 
 	hulksmash.NewSmasher().Smash(context.Background(), requestBuilder)

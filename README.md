@@ -15,9 +15,8 @@ send requests to a variety of endpoints, with varying payloads, or with a cacheb
 create your smasher instance and tell it to start smashing.
 
 ```go
-requestBuilder := func(index int) *http.Request {
-    req, _ := http.NewRequest(http.MethodGet, url, nil)
-    return req
+requestBuilder := func(index int) (*http.Request, error) {
+    return http.NewRequest(http.MethodGet, url, nil)
 }
 
 hulksmash.NewSmasher(hulksmash.WithIterations(5)).Smash(context.Background(), requestBuilder)

@@ -1,7 +1,6 @@
 package hulksmash
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -59,8 +58,6 @@ var (
 		log.Println(err.Error())
 	}
 	defaultSuccessResponseCallback = func(resp SuccessResponse) {
-		defer resp.Response.Body.Close()
-		body, _ := ioutil.ReadAll(resp.Response.Body)
-		log.Printf("Status %d, Body %s\n", resp.Response.StatusCode, string(body))
+		log.Printf("Status %d, Body %s\n", resp.StatusCode, string(resp.ResponseBody))
 	}
 )

@@ -2,7 +2,7 @@ package hulksmash
 
 import (
 	"context"
-	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -11,13 +11,17 @@ import (
 
 // SuccessResponse is sent to the success callback. This response contains the original request as well as the response.
 type SuccessResponse struct {
-	Request  *http.Request
-	Response *http.Response
+	StatusCode   int
+	RequestBody  []byte
+	ResponseBody []byte
+
+	RawRequest  *http.Request
+	RawResponse *http.Response
 }
 
 type (
 	// BuildRequestFunc is a function which accepts a iteration index and returns an http request
-	BuildRequestFunc        func(index int) *http.Request
+	BuildRequestFunc func(index int) (*http.Request, error)
 
 	// SuccessResponseCallback is a callback function which is called after a successful http request is performed
 	SuccessResponseCallback func(resp SuccessResponse)
@@ -69,18 +73,30 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 		func(job interface{}) (result interface{}, err error) {
 			index := job.(int)
 
-			req := buildRequest(index)
-			if req == nil {
-				return nil, errors.New("invalid request")
+			req, err := buildRequest(index)
+			if err != nil {
+				return nil, err
 			}
+
 			s.anonymizer.AnonymizeRequest(req) //disguise the traffic
 
 			resp, err := s.client.Do(req)
 			if err != nil {
 				return nil, err
 			}
+			defer resp.Body.Close()
 
-			return SuccessResponse{Request: req, Response: resp}, nil
+			successResp := SuccessResponse{
+				StatusCode:  resp.StatusCode,
+				RawRequest:  req,
+				RawResponse: resp,
+			}
+
+			b, _ := req.GetBody()
+			successResp.RequestBody, _ = ioutil.ReadAll(b)
+			successResp.ResponseBody, _ = ioutil.ReadAll(resp.Body)
+
+			return successResp, nil
 		})
 
 	list := makeRange(s.startIndex, s.startIndex+s.iterations)

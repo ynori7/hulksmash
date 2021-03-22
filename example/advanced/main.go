@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -21,22 +20,17 @@ const (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	requestBuilder := func(index int) *http.Request {
+	requestBuilder := func(index int) (*http.Request, error) {
 		reqBody := fmt.Sprintf(jsonFormat, index, lastName)
-		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader([]byte(reqBody)))
-		return req
+		return http.NewRequest(http.MethodPost, url, bytes.NewReader([]byte(reqBody)))
 	}
 
 	successFunc := func(resp hulksmash.SuccessResponse) {
-		defer resp.Response.Body.Close()
-		if resp.Response.StatusCode == 200 {
-			body, _ := ioutil.ReadAll(resp.Response.Body)
-			log.Printf("%d: Found one %s", resp.Response.StatusCode, string(body))
+		if resp.StatusCode == 200 {
+			log.Printf("%d: Found one %s", resp.StatusCode, string(resp.ResponseBody))
 			cancel()
 		} else {
-			b, _ := resp.Request.GetBody()
-			reqBody, _ := ioutil.ReadAll(b)
-			log.Printf("%d: Not valid %s", resp.Response.StatusCode, string(reqBody))
+			log.Printf("%d: Not valid %s", resp.StatusCode, string(resp.RequestBody))
 		}
 	}
 
