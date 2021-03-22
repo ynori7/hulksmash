@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// SmasherOption is a functional option for overriding the default configuration
 type SmasherOption func(s *smasher)
 
 // WithClient allows you to override the default http client, for example if you want to add your own round-tripper or timeouts
