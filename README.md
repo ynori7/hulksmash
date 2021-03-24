@@ -1,4 +1,4 @@
-# Hulk Smash [![GoDoc](https://godoc.org/github.com/ynori7/hulksmash?status.png)](https://godoc.org/github.com/ynori7/hulksmash) [![Go Report Card](https://goreportcard.com/badge/ynori7/hulksmash)](https://goreportcard.com/report/github.com/ynori7/workerpool)
+# Hulk Smash [![GoDoc](https://godoc.org/github.com/ynori7/hulksmash?status.png)](https://godoc.org/github.com/ynori7/hulksmash) [![Go Report Card](https://goreportcard.com/badge/ynori7/hulksmash)](https://goreportcard.com/report/github.com/ynori7/hulksmash)
 
 ![HulkSmash Logo](hulksmash.png)
 
