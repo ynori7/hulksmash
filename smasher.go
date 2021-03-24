@@ -92,8 +92,10 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 				RawResponse: resp,
 			}
 
-			b, _ := req.GetBody()
-			successResp.RequestBody, _ = ioutil.ReadAll(b)
+			if req.GetBody != nil {
+				b, _ := req.GetBody()
+				successResp.RequestBody, _ = ioutil.ReadAll(b)
+			}
 			successResp.ResponseBody, _ = ioutil.ReadAll(resp.Body)
 
 			return successResp, nil
