@@ -4,8 +4,10 @@ import (
 	"context"
 	"io/ioutil"
 	"log"
-	"net/http"
+	nethttp "net/http"
 
+	"github.com/ynori7/hulksmash/anonymizer"
+	"github.com/ynori7/hulksmash/http"
 	"github.com/ynori7/workerpool"
 )
 
@@ -15,22 +17,23 @@ type SuccessResponse struct {
 	RequestBody  []byte
 	ResponseBody []byte
 
-	RawRequest  *http.Request
-	RawResponse *http.Response
+	RawRequest  *nethttp.Request
+	RawResponse *nethttp.Response
 }
 
 type (
 	// BuildRequestFunc is a function which accepts a iteration index and returns an http request
-	BuildRequestFunc func(index int) (*http.Request, error)
+	BuildRequestFunc func(index int) (*nethttp.Request, error)
 
 	// SuccessResponseCallback is a callback function which is called after a successful http request is performed
 	SuccessResponseCallback func(resp SuccessResponse)
 )
 
 type smasher struct {
-	anonymizer Anonymizer
+	anonymizeRequets bool
+	anonymizer       anonymizer.Anonymizer
 
-	client *http.Client
+	client *nethttp.Client
 
 	iterations int
 	startIndex int
@@ -43,15 +46,16 @@ type smasher struct {
 // NewSmasher returns a new smasher with the specified configuration
 func NewSmasher(options ...SmasherOption) *smasher {
 	s := &smasher{
-		anonymizer: NewAnonymizer(),
+		anonymizer: anonymizer.New(),
 
 		// Set defaults
-		iterations: defaultIterations,
-		startIndex: defaultStartIndex,
-		client:     &http.Client{},
-		workers:    defaultWorkerCount,
-		onError:    defaultOnError,
-		onSuccess:  defaultSuccessResponseCallback,
+		iterations:       defaultIterations,
+		startIndex:       defaultStartIndex,
+		client:           http.NewClient(),
+		workers:          defaultWorkerCount,
+		onError:          defaultOnError,
+		onSuccess:        defaultSuccessResponseCallback,
+		anonymizeRequets: defaultAnonymizeRequests,
 	}
 
 	// apply options
@@ -78,7 +82,9 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 				return nil, err
 			}
 
-			s.anonymizer.AnonymizeRequest(req) //disguise the traffic
+			if s.anonymizeRequets {
+				s.anonymizer.AnonymizeRequest(req) //disguise the traffic
+			}
 
 			resp, err := s.client.Do(req)
 			if err != nil {

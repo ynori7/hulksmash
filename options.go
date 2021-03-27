@@ -51,10 +51,18 @@ func WithStartIndex(i int) SmasherOption {
 	}
 }
 
+// WithAnonymizeRequests overrides the default flag to indicate whether reqeusts should be anonymized (by adding additional headers)
+func WithAnonymizeRequests(anonymize bool) SmasherOption {
+	return func(s *smasher) {
+		s.anonymizeRequets = anonymize
+	}
+}
+
 var (
 	defaultIterations  = 1
 	defaultStartIndex  = 0
 	defaultWorkerCount = 1
+	defaultAnonymizeRequests = true
 	defaultOnError     = func(err error) {
 		log.Println(err.Error())
 	}

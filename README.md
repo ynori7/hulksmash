@@ -32,8 +32,11 @@ The smasher comes with some configurable options with safe defaults. Here is a l
 | WithSuccessResponseCallback | Function which is called in case of a successful request | Simply logs the http status code and response body |
 | WithIterations | The number of calls to make | 1 |
 | WithStartIndex | The start index to use when iterating. Can be useful if you want to resume a previous experiment | 0 |
+| WithAnonymizeRequests | Can be used to disable the logic to automatically add headers to make reqeusts look more organic | true |
 
 A basic and advanced example can be found in [example](example).
 
 ## Attribution
 Icon from [Sujud.icon](https://www.iconfinder.com/MUHrist) ([CC BY 3.0](https://creativecommons.org/licenses/by/3.0/))
+
+Uses `refraction-networking/utls` to randomize the TCP Hello fingerprint.

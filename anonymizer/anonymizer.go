@@ -1,4 +1,4 @@
-package hulksmash
+package anonymizer
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type Anonymizer struct {
 }
 
 // NewAnonymizer returns a new anonymizer
-func NewAnonymizer() Anonymizer {
+func New() Anonymizer {
 	return Anonymizer{
 		rand: rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
@@ -21,8 +21,10 @@ func NewAnonymizer() Anonymizer {
 
 // AnonymizeRequest accepts an http request and anonymizes it by adding a forwarded-for header and user agent string
 func (a Anonymizer) AnonymizeRequest(r *http.Request) {
-	r.Header.Add("X-Forwarded-For", a.GetRandomIp())
+	r.Header.Set("X-Forwarded-For", a.GetRandomIp())
 	r.Header.Set("User-Agent", a.GetRandomUserAgent())
+	r.Header.Set("Cache-Control", "max-age=0")
+	r.Header.Set("Upgrade-Insecure-Requests", "1")
 }
 
 // GetRandomIp returns a random IPv4 or IPv6 address
