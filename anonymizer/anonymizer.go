@@ -12,7 +12,7 @@ type Anonymizer struct {
 	rand *rand.Rand
 }
 
-// NewAnonymizer returns a new anonymizer
+// New returns a new anonymizer
 func New() Anonymizer {
 	return Anonymizer{
 		rand: rand.New(rand.NewSource(time.Now().UnixNano())),

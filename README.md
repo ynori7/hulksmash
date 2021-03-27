@@ -26,7 +26,7 @@ The smasher comes with some configurable options with safe defaults. Here is a l
 
 | Option        | Description           | Default  |
 | ------------- |:-------------| -----|
-| WithClient     | Allows you to override the HTTP Client | &http.Client{} |
+| WithClient     | Allows you to override the HTTP Client | hulksmash's http.NewClient() |
 | WithWorkerCount      | Sets the number of workers which will send requests in parallel      |   1 |
 | WithErrorFunc | Function which is called in case of an error while performing the request      |    Simply logs it to stdout |
 | WithSuccessResponseCallback | Function which is called in case of a successful request | Simply logs the http status code and response body |
