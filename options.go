@@ -59,11 +59,11 @@ func WithAnonymizeRequests(anonymize bool) SmasherOption {
 }
 
 var (
-	defaultIterations  = 1
-	defaultStartIndex  = 0
-	defaultWorkerCount = 1
+	defaultIterations        = 1
+	defaultStartIndex        = 0
+	defaultWorkerCount       = 1
 	defaultAnonymizeRequests = true
-	defaultOnError     = func(err error) {
+	defaultOnError           = func(err error) {
 		log.Println(err.Error())
 	}
 	defaultSuccessResponseCallback = func(resp SuccessResponse) {
