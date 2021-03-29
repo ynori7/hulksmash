@@ -2,9 +2,12 @@ package hulksmash
 
 import (
 	"context"
+	"fmt"
+	"github.com/ynori7/hulksmash/sequence"
 	"io/ioutil"
 	"log"
 	nethttp "net/http"
+	"time"
 
 	"github.com/ynori7/hulksmash/anonymizer"
 	"github.com/ynori7/hulksmash/http"
@@ -22,8 +25,8 @@ type SuccessResponse struct {
 }
 
 type (
-	// BuildRequestFunc is a function which accepts a iteration index and returns an http request
-	BuildRequestFunc func(index int) (*nethttp.Request, error)
+	// BuildRequestFunc is a function which accepts a iteration item and returns an http request
+	BuildRequestFunc func(item string) (*nethttp.Request, error)
 
 	// SuccessResponseCallback is a callback function which is called after a successful http request is performed
 	SuccessResponseCallback func(resp SuccessResponse)
@@ -35,9 +38,10 @@ type smasher struct {
 
 	client *nethttp.Client
 
-	iterations int
-	startIndex int
-	workers    int
+	iterations   int
+	startIndex   int
+	sequenceFunc sequence.SequenceFunc
+	workers      int
 
 	onError   func(err error)
 	onSuccess SuccessResponseCallback
@@ -46,7 +50,7 @@ type smasher struct {
 // NewSmasher returns a new smasher with the specified configuration
 func NewSmasher(options ...SmasherOption) *smasher {
 	s := &smasher{
-		anonymizer: anonymizer.New(),
+		anonymizer: anonymizer.New(time.Now().UnixNano()),
 
 		// Set defaults
 		iterations:       defaultIterations,
@@ -56,6 +60,7 @@ func NewSmasher(options ...SmasherOption) *smasher {
 		onError:          defaultOnError,
 		onSuccess:        defaultSuccessResponseCallback,
 		anonymizeRequets: defaultAnonymizeRequests,
+		sequenceFunc:     sequence.Numeric,
 	}
 
 	// apply options
@@ -75,9 +80,9 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 		},
 		s.onError,
 		func(job interface{}) (result interface{}, err error) {
-			index := job.(int)
+			item := job.(string)
 
-			req, err := buildRequest(index)
+			req, err := buildRequest(item)
 			if err != nil {
 				return nil, err
 			}
@@ -107,8 +112,8 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 			return successResp, nil
 		})
 
-	list := makeRange(s.startIndex, s.startIndex+s.iterations)
-
+	list := s.sequenceFunc(s.startIndex, s.startIndex+s.iterations)
+fmt.Println(list)
 	if err := workerPool.Work(
 		ctx,
 		s.workers, //The number of workers which should work in parallel
@@ -116,13 +121,4 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 	); err != nil {
 		log.Println(err.Error())
 	}
-}
-
-// makeRange returns a list starting from min up to (but not including) max
-func makeRange(min, max int) []int {
-	a := make([]int, max-min)
-	for i := range a {
-		a[i] = min + i
-	}
-	return a
 }

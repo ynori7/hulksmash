@@ -1,6 +1,7 @@
 package hulksmash
 
 import (
+	"github.com/ynori7/hulksmash/sequence"
 	"log"
 	"net/http"
 )
@@ -55,6 +56,12 @@ func WithStartIndex(i int) SmasherOption {
 func WithAnonymizeRequests(anonymize bool) SmasherOption {
 	return func(s *smasher) {
 		s.anonymizeRequets = anonymize
+	}
+}
+
+func WithSequenceFunc(f sequence.SequenceFunc) SmasherOption {
+	return func(s *smasher) {
+		s.sequenceFunc = f
 	}
 }
 

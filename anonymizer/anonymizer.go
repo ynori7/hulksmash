@@ -13,9 +13,9 @@ type Anonymizer struct {
 }
 
 // New returns a new anonymizer
-func New() Anonymizer {
+func New(seed int64) Anonymizer {
 	return Anonymizer{
-		rand: rand.New(rand.NewSource(time.Now().UnixNano())),
+		rand: rand.New(rand.NewSource(seed)),
 	}
 }
 

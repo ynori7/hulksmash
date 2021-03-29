@@ -12,7 +12,7 @@ const (
 )
 
 func main() {
-	requestBuilder := func(index int) (*http.Request, error) {
+	requestBuilder := func(item string) (*http.Request, error) {
 		return http.NewRequest(http.MethodGet, url, nil)
 	}
 

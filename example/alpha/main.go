@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/ynori7/hulksmash/sequence"
 	"log"
 	"net/http"
 
@@ -11,8 +12,7 @@ import (
 )
 
 const (
-	startId    = 38656780
-	url        = "https://127.0.0.1/onlineCheckIn"
+	url        = "https://web-api-stage.goorange.sixt.com/v1/rental-testing/dummy"
 	lastName   = "Doe"
 	jsonFormat = `{"flightNumber": "%s", "lastName":"%s"}`
 )
@@ -35,9 +35,10 @@ func main() {
 	}
 
 	hulksmash.NewSmasher(
-		hulksmash.WithStartIndex(startId),
+		hulksmash.WithStartIndex(int(sequence.GetIndexForAlpha36("aaaaaa"))),
 		hulksmash.WithIterations(100),
 		hulksmash.WithWorkerCount(3),
 		hulksmash.WithSuccessResponseCallback(successFunc),
+		hulksmash.WithSequenceFunc(sequence.AlphaNumeric36),
 	).Smash(ctx, requestBuilder)
 }

@@ -15,7 +15,7 @@ send requests to a variety of endpoints, with varying payloads, or with a cacheb
 create your smasher instance and tell it to start smashing.
 
 ```go
-requestBuilder := func(index int) (*http.Request, error) {
+requestBuilder := func(item string) (*http.Request, error) {
     return http.NewRequest(http.MethodGet, url, nil)
 }
 
@@ -33,6 +33,7 @@ The smasher comes with some configurable options with safe defaults. Here is a l
 | WithIterations | The number of calls to make | 1 |
 | WithStartIndex | The start index to use when iterating. Can be useful if you want to resume a previous experiment | 0 |
 | WithAnonymizeRequests | Can be used to disable the logic to automatically add headers to make reqeusts look more organic | true |
+| WithSequenceFunc | Can be used to specify the way the iteration sequence should be built, for example numeric or alphanumeric. Some presets are available in the sequence package | sequence.Numeric |
 
 A basic and advanced example can be found in [example](example).
 
