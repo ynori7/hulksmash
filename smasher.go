@@ -2,8 +2,6 @@ package hulksmash
 
 import (
 	"context"
-	"fmt"
-	"github.com/ynori7/hulksmash/sequence"
 	"io/ioutil"
 	"log"
 	nethttp "net/http"
@@ -11,6 +9,7 @@ import (
 
 	"github.com/ynori7/hulksmash/anonymizer"
 	"github.com/ynori7/hulksmash/http"
+	"github.com/ynori7/hulksmash/sequence"
 	"github.com/ynori7/workerpool"
 )
 
@@ -113,7 +112,7 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 		})
 
 	list := s.sequenceFunc(s.startIndex, s.startIndex+s.iterations)
-fmt.Println(list)
+
 	if err := workerPool.Work(
 		ctx,
 		s.workers, //The number of workers which should work in parallel
