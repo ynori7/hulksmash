@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/ynori7/hulksmash/sequence"
 	"log"
 	"net/http"
 
 	"github.com/ynori7/hulksmash"
+	"github.com/ynori7/hulksmash/sequence"
 )
 
 const (
-	url        = "https://web-api-stage.goorange.sixt.com/v1/rental-testing/dummy"
+	url        = "https://127.0.0.1/onlineCheckIn"
 	lastName   = "Doe"
 	jsonFormat = `{"flightNumber": "%s", "lastName":"%s"}`
 )
