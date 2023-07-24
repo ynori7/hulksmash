@@ -1,16 +1,16 @@
 package hulksmash
 
 import (
-	"github.com/ynori7/hulksmash/sequence"
 	"log"
-	"net/http"
+
+	"github.com/ynori7/hulksmash/sequence"
 )
 
 // SmasherOption is a functional option for overriding the default configuration
 type SmasherOption func(s *smasher)
 
 // WithClient allows you to override the default http client, for example if you want to add your own round-tripper or timeouts
-func WithClient(c *http.Client) SmasherOption {
+func WithClient(c HttpClient) SmasherOption {
 	return func(s *smasher) {
 		s.client = c
 	}

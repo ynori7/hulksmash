@@ -23,6 +23,10 @@ type SuccessResponse struct {
 	RawResponse *nethttp.Response
 }
 
+type HttpClient interface {
+	Do(req *nethttp.Request) (*nethttp.Response, error)
+}
+
 type (
 	// BuildRequestFunc is a function which accepts a iteration item and returns an http request
 	BuildRequestFunc func(item string) (*nethttp.Request, error)
@@ -35,8 +39,7 @@ type smasher struct {
 	anonymizeRequets bool
 	anonymizer       anonymizer.Anonymizer
 
-	client *nethttp.Client
-
+	client       HttpClient
 	iterations   int
 	startIndex   int
 	sequenceFunc sequence.SequenceFunc
