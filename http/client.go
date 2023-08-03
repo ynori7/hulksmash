@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/refraction-networking/utls"
+	tls "github.com/refraction-networking/utls"
 )
 
 // NewClient returns a new http client with reasonable timeouts and using a randomized tcp hello fingerprint
@@ -38,11 +38,13 @@ func NewClient() *http.Client {
 				}
 
 				//initialize a tls connection with the underlying tcp connection and config
+				//only HelloRandomizedNoALPN seems to consistently work
 				tlsConn := tls.UClient(tcpConn, &config, tls.HelloRandomizedNoALPN)
 
 				//start the tls handshake between servers
 				err = tlsConn.Handshake()
 				if err != nil {
+					tcpConn.Close()
 					return nil, err
 				}
 

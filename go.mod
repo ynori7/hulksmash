@@ -10,4 +10,5 @@ require (
 	github.com/ynori7/trytryagain v1.0.1
 	github.com/ynori7/workerpool v1.2.1
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
+	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
 )
