@@ -25,6 +25,7 @@ func (a Anonymizer) AnonymizeRequest(r *http.Request) {
 	r.Header.Set("User-Agent", a.GetRandomUserAgent())
 	r.Header.Set("Cache-Control", "max-age=0")
 	r.Header.Set("Upgrade-Insecure-Requests", "1")
+	r.Header.Set("Accept-Language", a.GetRandomAcceptLanguage())
 }
 
 // GetRandomIp returns a random IPv4 or IPv6 address
@@ -57,13 +58,33 @@ func (a Anonymizer) GetRandomUserAgent() string {
 	return userAgentFunc(a, platform)
 }
 
+// GetRandomUserAgentWithBrowser returns a randomized user agent string for a specific browser
+func (a Anonymizer) GetRandomUserAgentWithBrowser(ua Browser) string {
+	if ua < 0 || int(ua) >= len(userAgentFuncs) {
+		return ""
+	}
+	platform := platforms[a.rand.Intn(len(platforms))]
+	userAgentFunc := userAgentFuncs[ua]
+	return userAgentFunc(a, platform)
+}
+
 var platforms = []string{
 	"Windows NT 6.1; Win64; x64",                 //windows
-	"Macintosh; Intel Mac OS X x.y",              //mac
+	"Macintosh; Intel Mac OS X 10_15_7",          //mac
 	"iPhone; CPU iPhone OS 13_5_1 like Mac OS X", //iOS
 	"X11; Linux x86_64",                          //linux
 	"Windows Phone OS 7.5",                       //windows phone
 }
+
+// user agent func IDs
+type Browser int
+
+const (
+	Firefox Browser = 0
+	Chrome  Browser = 1
+	Opera   Browser = 2
+	Safari  Browser = 3
+)
 
 var userAgentFuncs = []func(a Anonymizer, platform string) string{
 	// Firefox
@@ -105,4 +126,39 @@ func (a Anonymizer) randomDate() string {
 
 	sec := a.rand.Int63n(delta) + min
 	return time.Unix(sec, 0).Format(dateFormat)
+}
+
+// GetRandomAcceptLanguage returns a random English accept-language string
+func (a Anonymizer) GetRandomAcceptLanguage() string {
+	return acceptLanguages[a.rand.Intn(len(acceptLanguages))]
+}
+
+var acceptLanguages = []string{
+	"en-US,en;q=0.8,fr;q=0.6,de;q=0.4,es;q=0.2",
+	"en-US,en;q=0.8,fr;q=0.6,de;q=0.4,es;q=0.2",
+	"en-US,en;q=0.8,fr;q=0.6,de;q=0.4,es;q=0.2",
+	"en-US,en;q=0.8,fr;q=0.6,de;q=0.4,es;q=0.2",
+	"en-GB,en;q=0.9,de;q=0.7,fr;q=0.5,es;q=0.3",
+	"en-AU,en;q=0.8,fr;q=0.6,de;q=0.4,es;q=0.2",
+	"en-CA,en;q=0.9,fr;q=0.7,de;q=0.5,es;q=0.3",
+	"en-US;q=1.0, en-GB;q=0.9, en;q=0.8",
+	"en;q=1.0, en-US;q=0.9, en-GB;q=0.8",
+	"en-GB;q=1.0, en;q=0.9, en-US;q=0.8",
+	"en;q=1.0, en-GB;q=0.9, en-US;q=0.8",
+	"en-US;q=1.0, en;q=0.9, en-GB;q=0.8",
+	"en-GB;q=1.0, en-US;q=0.9, en;q=0.8",
+	"en-US;q=1.0, en-GB;q=0.9, en;q=0.8",
+	"en;q=1.0, en-GB;q=0.9, en-US;q=0.8",
+	"en-US;q=1.0, en;q=0.9, en-GB;q=0.8",
+	"en;q=1.0, en-US;q=0.9, en-GB;q=0.8",
+	"en-US;q=1.0, en-GB;q=0.8, en;q=0.7",
+	"en;q=1.0, en-US;q=0.8, en-GB;q=0.7",
+	"en-GB;q=1.0, en;q=0.8, en-US;q=0.7",
+	"en;q=1.0, en-GB;q=0.8, en-US;q=0.7",
+	"en-US;q=1.0, en;q=0.8, en-GB;q=0.7",
+	"en-GB;q=1.0, en-US;q=0.8, en;q=0.7",
+	"en-US;q=1.0, en-GB;q=0.8, en;q=0.7",
+	"en;q=1.0, en-GB;q=0.8, en-US;q=0.7",
+	"en-US;q=1.0, en;q=0.8, en-GB;q=0.7",
+	"en;q=1.0, en-US;q=0.8, en-GB;q=0.7",
 }

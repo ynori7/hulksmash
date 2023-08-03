@@ -21,7 +21,7 @@ func Test_GetRandomIP(t *testing.T) {
 func Test_GetRandomUserAgent(t *testing.T) {
 	a := New(1)
 
-	expected1 := "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y) AppleWebKit/447.1.19 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/431.1"
+	expected1 := "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/447.1.19 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/431.1"
 	expected2 := "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.1456.100 Safari/544.11"
 
 	actual1 := a.GetRandomUserAgent()
