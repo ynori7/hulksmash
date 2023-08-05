@@ -30,11 +30,23 @@ func NewClientV2() *ClientV2 {
 // Do implements the http.Client interface
 func (c *ClientV2) Do(req *http.Request) (*http.Response, error) {
 	resp, err := c.roundTripper.RoundTrip(req)
-	if err != nil && strings.Contains(err.Error(), "connection broken") {
+	if isConnectionBroken(err) {
 		c.roundTripper.resetConnection()
 		return c.roundTripper.RoundTrip(req)
 	}
 	return resp, err
+}
+
+func isConnectionBroken(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if strings.Contains(err.Error(), "connection broken") || strings.Contains(err.Error(), "connection reset by peer") || strings.Contains(err.Error(), "connection refused") {
+		return true
+	}
+
+	return false
 }
 
 // SetClientHelloID sets the ClientHelloID to use when establishing a new connection in case you want to override the default
