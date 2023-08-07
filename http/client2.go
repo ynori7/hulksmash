@@ -17,36 +17,21 @@ import (
 
 // ClientV2 is an http client which uses a randomized tcp hello fingerprint
 type ClientV2 struct {
+	*http.Client
+
 	roundTripper *roundTripper
 }
 
 // NewClientV2 returns a new http client with using a randomized tcp hello fingerprint
 func NewClientV2() *ClientV2 {
+	rt := newRoundTripper()
+
 	return &ClientV2{
-		roundTripper: newRoundTripper(),
+		roundTripper: rt,
+		Client: &http.Client{
+			Transport: rt,
+		},
 	}
-}
-
-// Do implements the http.Client interface
-func (c *ClientV2) Do(req *http.Request) (*http.Response, error) {
-	resp, err := c.roundTripper.RoundTrip(req)
-	if isConnectionBroken(err) {
-		c.roundTripper.resetConnection()
-		return c.roundTripper.RoundTrip(req)
-	}
-	return resp, err
-}
-
-func isConnectionBroken(err error) bool {
-	if err == nil {
-		return false
-	}
-
-	if strings.Contains(err.Error(), "connection broken") || strings.Contains(err.Error(), "connection reset by peer") || strings.Contains(err.Error(), "connection refused") {
-		return true
-	}
-
-	return false
 }
 
 // SetClientHelloID sets the ClientHelloID to use when establishing a new connection in case you want to override the default
@@ -79,7 +64,22 @@ func (rt *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	return transport.RoundTrip(req)
+	res, err := transport.RoundTrip(req)
+	if err == nil {
+		return res, err
+	}
+
+	//if the request failed, check if we need to fetch a new connection
+	if isConnectionBroken(err) {
+		rt.resetConnection()
+		transport, err := rt.getTransport(req)
+		if err != nil {
+			return nil, err
+		}
+		return transport.RoundTrip(req)
+	}
+
+	return nil, err
 }
 
 func (rt *roundTripper) getTransport(req *http.Request) (http.RoundTripper, error) {
@@ -178,10 +178,23 @@ func newRoundTripper() *roundTripper {
 		},
 
 		//this one is the most stable, and it seems to use HTTP 1.1 which gets detected with a higher botscore
-		helloID: utls.HelloRandomizedNoALPN,
+		helloID: utls.HelloRandomizedALPN,
 	}
 }
 
 func init() {
 	utls.EnableWeakCiphers()
+}
+
+func isConnectionBroken(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if strings.Contains(err.Error(), "connection broken") || strings.Contains(err.Error(), "connection reset by peer") ||
+		strings.Contains(err.Error(), "connection refused") {
+		return true
+	}
+
+	return false
 }

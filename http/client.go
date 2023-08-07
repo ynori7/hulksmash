@@ -39,7 +39,7 @@ func NewClient() *http.Client {
 
 				//initialize a tls connection with the underlying tcp connection and config
 				//only HelloRandomizedNoALPN seems to consistently work
-				tlsConn := tls.UClient(tcpConn, &config, tls.HelloRandomizedNoALPN)
+				tlsConn := tls.UClient(tcpConn, &config, tls.HelloRandomizedALPN)
 
 				//start the tls handshake between servers
 				err = tlsConn.Handshake()
