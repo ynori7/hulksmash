@@ -2,7 +2,7 @@ package hulksmash
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"log"
 	nethttp "net/http"
 	"time"
@@ -107,9 +107,9 @@ func (s *smasher) Smash(ctx context.Context, buildRequest BuildRequestFunc) {
 
 			if req.GetBody != nil {
 				b, _ := req.GetBody()
-				successResp.RequestBody, _ = ioutil.ReadAll(b)
+				successResp.RequestBody, _ = io.ReadAll(b)
 			}
-			successResp.ResponseBody, _ = ioutil.ReadAll(resp.Body)
+			successResp.ResponseBody, _ = io.ReadAll(resp.Body)
 
 			return successResp, nil
 		})
