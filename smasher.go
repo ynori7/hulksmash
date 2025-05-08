@@ -7,6 +7,7 @@ import (
 	nethttp "net/http"
 	"time"
 
+	utls "github.com/refraction-networking/utls"
 	"github.com/ynori7/hulksmash/anonymizer"
 	"github.com/ynori7/hulksmash/http"
 	"github.com/ynori7/hulksmash/sequence"
@@ -51,13 +52,16 @@ type smasher struct {
 
 // NewSmasher returns a new smasher with the specified configuration
 func NewSmasher(options ...SmasherOption) *smasher {
+	cli := http.NewClientV2()
+	cli.SetClientHelloID(utls.HelloRandomizedNoALPN)
+
 	s := &smasher{
 		anonymizer: anonymizer.New(time.Now().UnixNano()),
 
 		// Set defaults
 		iterations:       defaultIterations,
 		startIndex:       defaultStartIndex,
-		client:           http.NewClient(),
+		client:           cli,
 		workers:          defaultWorkerCount,
 		onError:          defaultOnError,
 		onSuccess:        defaultSuccessResponseCallback,
