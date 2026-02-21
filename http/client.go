@@ -50,7 +50,6 @@ func NewClient() *http.Client {
 
 				return tlsConn, nil
 			},
-			ForceAttemptHTTP2: true,
 		},
 	}
 }
