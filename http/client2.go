@@ -34,6 +34,21 @@ func NewClientV2() *ClientV2 {
 	}
 }
 
+// NewClientV2ForTests returns a new http client that uses the standard transport for testing with httptest
+// Example usage:  client := NewClientV2ForTests(server.Client().Transport)
+func NewClientV2ForTests(transport http.RoundTripper) *ClientV2 {
+	if transport == nil {
+		transport = http.DefaultTransport
+	}
+
+	return &ClientV2{
+		roundTripper: nil, // No custom round tripper for tests
+		Client: &http.Client{
+			Transport: transport,
+		},
+	}
+}
+
 // SetClientHelloID sets the ClientHelloID to use when establishing a new connection in case you want to override the default
 func (c *ClientV2) SetClientHelloID(id utls.ClientHelloID) {
 	c.roundTripper.setHelloID(id)
